@@ -8,6 +8,7 @@ class ZonesView extends Ui.DataField {
 	
 	hidden var currentZoneColor = Gfx.COLOR_DK_GREEN;
 	hidden var hr = 0;
+	hidden var currentZone = 0;
 
 	hidden var timeInZone = new [5];
 	hidden var zones = User.getHeartRateZones(currentSport);
@@ -62,22 +63,27 @@ class ZonesView extends Ui.DataField {
 		if(hr > zones[0] && hr <= zones[1]) {
        		timeInZone[0] += 1;
 			currentZoneColor = Gfx.COLOR_DK_GREEN;
+			currentZone = 0;
 		}
 		else if(hr > zones[1] && hr <= zones[2]) {
 			timeInZone[1] += 1;
 			currentZoneColor = Gfx.COLOR_GREEN;
+			currentZone = 1;
 		}
 		else if(hr > zones[2] && hr <= zones[3]) {
 			timeInZone[2] += 1;
 			currentZoneColor = Gfx.COLOR_YELLOW;
+			currentZone = 2;
 		}
 		else if(hr > zones[3] && hr <= zones[4]) {
 			timeInZone[3] += 1;
 			currentZoneColor = Gfx.COLOR_ORANGE;
+			currentZone = 3;
 		}
 		else if(hr > zones[4]) {
 			timeInZone[4] += 1;
 			currentZoneColor = Gfx.COLOR_RED;
+			currentZone = 4;
 		}
 		
 		return info.currentHeartRate;
@@ -88,7 +94,9 @@ class ZonesView extends Ui.DataField {
     function onUpdate(dc) {
         // Set the background color
         View.findDrawableById("Background").setColor(currentZoneColor);
-		View.findDrawableById("ZoneBars").setTimeInZone(timeInZone);
+		var zoneBars = View.findDrawableById("ZoneBars");
+		zoneBars.setTimeInZone(timeInZone);
+		zoneBars.setCurrentZone(currentZone);
 		
 		var valueField = View.findDrawableById("value");
 		if (hr == 0 ) {

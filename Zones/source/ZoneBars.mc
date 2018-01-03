@@ -25,7 +25,7 @@ class ZoneBars extends Ui.Drawable {
 
     function draw(dc) {
     
-    	var maxWidth = dc.getWidth()-70;
+    	var maxWidth = dc.getWidth()-80;
 		var maxHeight = dc.getHeight();
 		var zoneSize = maxHeight / 5;
 		
@@ -38,7 +38,10 @@ class ZoneBars extends Ui.Drawable {
 	    	for(var i = 0; i < timeInZone.size(); i++) {
 				var width = (timeInZone[i]/sum * maxWidth);
 				if (i == currentZone) {
+					drawRectangle(dc, width, zoneSize, i);
+					
 					dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
+					
 				} else {
 					dc.setColor(colorZones[i], Gfx.COLOR_TRANSPARENT);	
 				}
@@ -49,4 +52,14 @@ class ZoneBars extends Ui.Drawable {
 			}
 		}
     }
+    
+    function drawRectangle(dc, barWidth, barHeight, row) {
+    	dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_TRANSPARENT);
+		var offsetX = barWidth;
+		var offsetY = ( barHeight * row) + barHeight / 2;
+		var hT = barHeight / 2;
+		var wT = hT * 2;
+		var pts = [ [wT + offsetX, offsetY - hT ], [hT + offsetX, offsetY], [wT + offsetX, offsetY + hT]];
+		dc.fillPolygon(pts);
+	}
 }

@@ -97,6 +97,8 @@ class ZonesView extends Ui.DataField {
 		var zoneBars = View.findDrawableById("ZoneBars");
 		zoneBars.setTimeInZone(timeInZone);
 		zoneBars.setCurrentZone(currentZone);
+		zoneBars.setCurrentHr(hr);
+		zoneBars.setZones(zones);
 		
 		var valueField = View.findDrawableById("value");
 		if (hr == 0 ) {

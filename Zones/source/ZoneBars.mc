@@ -6,6 +6,8 @@ class ZoneBars extends Ui.Drawable {
 	hidden var timeInZone = new [5];
 	hidden var colorZones= [Gfx.COLOR_DK_GREEN, Gfx.COLOR_GREEN, Gfx.COLOR_YELLOW, Gfx.COLOR_ORANGE, Gfx.COLOR_RED];
 	hidden var currentZone = 0;
+	hidden var currentHr = 0;
+	hidden var zones = [];
 	
 	function initialize() {
         var dictionary = {
@@ -22,7 +24,15 @@ class ZoneBars extends Ui.Drawable {
 	function setCurrentZone( val ) {
 		currentZone = val;
 	}
-
+	
+	function setCurrentHr( val ) {
+		currentHr = val;
+	}
+	
+	function setZones( val ) {
+		zones = val;
+	}
+		
     function draw(dc) {
     
     	var maxWidth = dc.getWidth()-80;
@@ -38,8 +48,6 @@ class ZoneBars extends Ui.Drawable {
 	    	for(var i = 0; i < timeInZone.size(); i++) {
 				var width = (timeInZone[i]/sum * maxWidth);
 				if (i == currentZone) {
-					drawRectangle(dc, width, zoneSize, i);
-					
 					dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
 					
 				} else {
@@ -49,15 +57,27 @@ class ZoneBars extends Ui.Drawable {
 				dc.fillRectangle(0, y, width, zoneSize);
 				dc.setColor(Gfx.COLOR_DK_GRAY, Gfx.COLOR_TRANSPARENT);
 				dc.drawRectangle(0, y, width, zoneSize);
+				if (i == currentZone) {
+					drawTriangle(dc, width, zoneSize);
+				}
 			}
 		}
     }
     
-    function drawRectangle(dc, barWidth, barHeight, row) {
+    function drawTriangle(dc, barWidth, barHeight) {
+    	var maxHeight = dc.getHeight();
     	dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_TRANSPARENT);
 		var offsetX = barWidth;
-		var offsetY = ( barHeight * row) + barHeight / 2;
-		var hT = barHeight / 2;
+		
+		var offsetY=0;
+		if (currentHr > zones[0] ) {
+			offsetY = ((self.currentZone) * barHeight) + (barHeight / (self.zones[self.currentZone+1] - self.zones[self.currentZone])) * (self.currentHr - self.zones[self.currentZone]);
+		}
+		if (currentHr > zones[4]) {
+			offsetY = maxHeight;
+		}
+		
+		var hT = barHeight * 0.4;
 		var wT = hT * 2;
 		var pts = [ [wT + offsetX, offsetY - hT ], [hT + offsetX, offsetY], [wT + offsetX, offsetY + hT]];
 		dc.fillPolygon(pts);

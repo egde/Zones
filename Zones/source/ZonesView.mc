@@ -1,6 +1,7 @@
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
 using Toybox.UserProfile as User;
+using Toybox.Application as App;
 
 class ZonesView extends Ui.DataField {
 
@@ -12,11 +13,13 @@ class ZonesView extends Ui.DataField {
 
 	hidden var timeInZone = new [5];
 	hidden var zones = User.getHeartRateZones(currentSport);
+	hidden var isVerticalLayout = true;
 	
     function initialize() {
         DataField.initialize();
         
         timeInZone = [0, 0, 0, 0, 0];
+        isVerticalLayout = Application.getApp().getProperty("isVerticalLayout");
     }
 
     // Set your layout here. Anytime the size of obscurity of
@@ -46,6 +49,10 @@ class ZonesView extends Ui.DataField {
         }
 
         View.findDrawableById("label").setText(Rez.Strings.label);
+        var zoneBars = View.findDrawableById("ZoneBars");
+        zoneBars.setIsVerticalLayout(isVerticalLayout);
+        zoneBars.initSizes(dc);
+        
         return true;
     }
 

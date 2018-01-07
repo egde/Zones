@@ -8,6 +8,12 @@ class ZoneBars extends Ui.Drawable {
 	hidden var currentZone = 0;
 	hidden var currentHr = 0;
 	hidden var zones = [];
+	hidden var isVerticalLayout = true;
+	
+	hidden var maxWidth = 0;
+	hidden var maxHeight = 0;
+	hidden var zoneSize = 0;
+	hidden var dT = 0;
 	
 	function initialize() {
         var dictionary = {
@@ -15,6 +21,21 @@ class ZoneBars extends Ui.Drawable {
         };
 
         Drawable.initialize(dictionary);
+    }
+    
+    // Initialise all the sizes for drawing purposes
+    function initSizes(dc) {
+    	if (isVerticalLayout) {
+    		self.maxWidth = dc.getWidth()-80;
+			self.maxHeight = dc.getHeight();
+			self.zoneSize = self.maxHeight / 5;
+			self.dT = self.zoneSize * 0.4;
+		} else {
+			self.maxWidth = dc.getWidth();
+			self.maxHeight = dc.getHeight()*0.8;
+			self.zoneSize = self.maxWidth / 5;
+			self.dT = self.maxHeight * 0.1;
+		}
     }
     
 	function setTimeInZone( val ) {
@@ -32,13 +53,20 @@ class ZoneBars extends Ui.Drawable {
 	function setZones( val ) {
 		zones = val;
 	}
+	
+	function setIsVerticalLayout( val ) {
+		isVerticalLayout = val;
+	}
 		
     function draw(dc) {
+    	if (isVerticalLayout) {
+    		drawVerticalLayout(dc);
+    	} else {
+    		drawHorizontalLayout(dc);
+    	}
+    }
     
-    	var maxWidth = dc.getWidth()-80;
-		var maxHeight = dc.getHeight();
-		var zoneSize = maxHeight / 5;
-		
+    function drawHorizontalLayout(dc) {
 		var sum = 0.0;
 		for(var i = 0; i < timeInZone.size(); i++) {
  			sum += timeInZone[i];
@@ -46,8 +74,34 @@ class ZoneBars extends Ui.Drawable {
 		
 		if(sum != null && sum > 0) {
 	    	for(var i = 0; i < timeInZone.size(); i++) {
+				var height = (timeInZone[i]/sum * maxHeight);
+				if (i == self.currentZone) {
+					dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
+				} else {
+					dc.setColor(colorZones[i], Gfx.COLOR_TRANSPARENT);	
+				}
+				var x = zoneSize*i;
+				dc.fillRectangle(x, dc.getHeight()-height, zoneSize, dc.getHeight());
+				dc.setColor(Gfx.COLOR_DK_GRAY, Gfx.COLOR_TRANSPARENT);
+				dc.drawRectangle(x, dc.getHeight()-height, zoneSize, dc.getHeight());
+			}
+			var progress = (timeInZone[self.currentZone]/sum * maxHeight);
+			drawTriangle(dc, progress);
+		}
+    }
+    
+    function drawVerticalLayout(dc) {
+		
+		var sum = 0.0;
+		for(var i = 0; i < timeInZone.size(); i++) {
+ 			sum += timeInZone[i];
+		}
+		
+		if(sum != null && sum > 0) {
+			// Draw Bars
+	    	for(var i = 0; i < timeInZone.size(); i++) {
 				var width = (timeInZone[i]/sum * maxWidth);
-				if (i == currentZone) {
+				if (i == self.currentZone) {
 					dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
 					
 				} else {
@@ -57,29 +111,45 @@ class ZoneBars extends Ui.Drawable {
 				dc.fillRectangle(0, y, width, zoneSize);
 				dc.setColor(Gfx.COLOR_DK_GRAY, Gfx.COLOR_TRANSPARENT);
 				dc.drawRectangle(0, y, width, zoneSize);
-				if (i == currentZone) {
-					drawTriangle(dc, width, zoneSize);
-				}
 			}
+			// Draw indicator
+			var progress = (timeInZone[self.currentZone]/sum * maxWidth);
+			drawTriangle(dc, progress);
 		}
     }
     
-    function drawTriangle(dc, barWidth, barHeight) {
-    	var maxHeight = dc.getHeight();
+    function drawTriangle(dc, progress) {
     	dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_TRANSPARENT);
-		var offsetX = barWidth;
+    	var offsetX = 0;
+    	var offsetY = 0;
+    	
+    	if (self.isVerticalLayout) {
+			offsetX = progress+5;
+		} else {
+			offsetY = dc.getHeight() - progress -5;
+		}
 		
-		var offsetY=0;
 		if (currentHr > zones[0] ) {
-			offsetY = ((self.currentZone) * barHeight) + (barHeight / (self.zones[self.currentZone+1] - self.zones[self.currentZone])) * (self.currentHr - self.zones[self.currentZone]);
+			if (self.isVerticalLayout) {
+				offsetY = ((self.currentZone) * self.zoneSize) + (self.zoneSize / (self.zones[self.currentZone+1] - self.zones[self.currentZone])) * (self.currentHr - self.zones[self.currentZone]);
+			} else {
+				offsetX = ((self.currentZone) * self.zoneSize) + (self.zoneSize / (self.zones[self.currentZone+1] - self.zones[self.currentZone])) * (self.currentHr - self.zones[self.currentZone]);
+			}
 		}
 		if (currentHr > zones[4]) {
-			offsetY = maxHeight;
+			if (self.isVerticalLayout) {
+				offsetY = maxHeight;
+			} else {
+				offsetX = maxWidth;
+			}
+		}
+		var pts = [];
+		if (self.isVerticalLayout) {
+			pts = [ [self.dT + offsetX, offsetY - self.dT ], [offsetX, offsetY], [self.dT + offsetX, offsetY + self.dT]];
+		} else {
+			pts = [ [ offsetX - self.dT, offsetY - self.dT], [offsetX, offsetY], [offsetX + self.dT, offsetY - self.dT] ];
 		}
 		
-		var hT = barHeight * 0.4;
-		var wT = hT * 2;
-		var pts = [ [wT + offsetX, offsetY - hT ], [hT + offsetX, offsetY], [wT + offsetX, offsetY + hT]];
 		dc.fillPolygon(pts);
 	}
 }

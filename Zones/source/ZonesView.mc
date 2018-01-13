@@ -81,10 +81,12 @@ class ZonesView extends Ui.DataField {
 		
 		hr = info.currentHeartRate;
 		duration = info.elapsedTime;
-		distance = info.elapsedDistance;
+		distance = info.elapsedDistance != null ? info.elapsedDistance : 0;
 		
 		//calculate current pace
-		pace = 1 / (info.currentSpeed * 1000); // sec per km
+		if (info.currentSpeed > 0) {
+			pace = 1 / (info.currentSpeed) * 1000; // sec per km
+		}
 		
 		if(hr > zones[0] && hr <= zones[1]) {
        		timeInZone[0] += 1;
@@ -153,6 +155,26 @@ class ZonesView extends Ui.DataField {
 					);
 				}
 			}
+		}
+		
+		if (showDistance) {
+			var distanceField = View.findDrawableById("distance");
+			var km = (distance / 1000);
+			var m =  (distance.toLong() % 1000) / 10;
+			distanceField.setText(
+				Lang.format("$1$.$2$", [
+					km.toLong().format("%d"),
+					m.format("%02d")
+					]
+				)
+			);
+		}
+
+		if (showPace) {
+			var paceField = View.findDrawableById("pace");
+			var min = (pace.toLong() / 60);
+			var sec = (pace.toLong() % 60);
+			paceField.setText( Lang.format("$1$:$2$", [min.format("%02d"), sec.format("%02d")]) );
 		}
 
         // Call parent's onUpdate(dc) to redraw the layout

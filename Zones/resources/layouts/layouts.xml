@@ -5,8 +5,18 @@
         <drawable class="ZoneBars" />
         <label id="label" x="30" y="center" color="Gfx.COLOR_BLACK" justification="Gfx.TEXT_JUSTIFY_CENTER" font="Gfx.FONT_TINY" />
         <label id="value" x="190" y="center" color="Gfx.COLOR_WHITE" justification="Gfx.TEXT_JUSTIFY_RIGHT" font="Gfx.FONT_NUMBER_HOT" />
+        <label id="duration" x="190" y="10" color="Gfx.COLOR_WHITE" justification="Gfx.TEXT_JUSTIFY_RIGHT" font="Gfx.FONT_NUMBER_HOT" />
+        <label id="distance" x="190" y="20" color="Gfx.COLOR_WHITE" justification="Gfx.TEXT_JUSTIFY_RIGHT" font="Gfx.FONT_NUMBER_HOT" />
+        <label id="pace" x="190" y="40" color="Gfx.COLOR_WHITE" justification="Gfx.TEXT_JUSTIFY_RIGHT" font="Gfx.FONT_NUMBER_HOT" />
     </layout>
 
+	<layout id="SmallLayout">
+        <drawable class="Background" />
+        <drawable class="ZoneBars" />
+        <label id="label" x="30" y="center" color="Gfx.COLOR_BLACK" justification="Gfx.TEXT_JUSTIFY_CENTER" font="Gfx.FONT_TINY" />
+        <label id="value" x="190" y="center" color="Gfx.COLOR_WHITE" justification="Gfx.TEXT_JUSTIFY_RIGHT" font="Gfx.FONT_NUMBER_HOT" />
+    </layout>
+    
     <!-- Layouts used for the for the four quadrants. -->
     <layout id="TopLeftLayout">
         <drawable class="Background" />

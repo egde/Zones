@@ -2,5 +2,9 @@
     <string id="AppName">Zones</string>
 
     <string id="label">Zones</string>
+    
     <string id="settings_isVerticalLayout">Vertical Layout</string>
+    <string id="settings_showTime">Show duration of run (1-field layout only)</string>
+    <string id="settings_showDistance">Show distance (1-field layout only)</string>
+    <string id="settings_showPace">Show your pace (1-field layout only)</string>
 </strings>

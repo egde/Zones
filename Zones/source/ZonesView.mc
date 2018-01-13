@@ -10,16 +10,26 @@ class ZonesView extends Ui.DataField {
 	hidden var currentZoneColor = Gfx.COLOR_DK_GREEN;
 	hidden var hr = 0;
 	hidden var currentZone = 0;
+	hidden var duration = 0;
+	hidden var distance = 0;
+	hidden var pace = 0;
 
 	hidden var timeInZone = new [5];
 	hidden var zones = User.getHeartRateZones(currentSport);
+	
 	hidden var isVerticalLayout = true;
+	hidden var showPace = false;
+	hidden var showDuration = false;
+	hidden var showDistance = false;
 	
     function initialize() {
         DataField.initialize();
         
         timeInZone = [0, 0, 0, 0, 0];
         isVerticalLayout = Application.getApp().getProperty("isVerticalLayout");
+        showPace = Application.getApp().getProperty("showPace");
+        showDuration = Application.getApp().getProperty("showDuration");
+        showDistance = Application.getApp().getProperty("showDistance");
     }
 
     // Set your layout here. Anytime the size of obscurity of
@@ -42,13 +52,17 @@ class ZonesView extends Ui.DataField {
         // Bottom right quadrant so we'll use the bottom right layout
         } else if (obscurityFlags == (OBSCURE_BOTTOM | OBSCURE_RIGHT)) {
             View.setLayout(Rez.Layouts.BottomRightLayout(dc));
-
         // Use the generic, centered layout
         } else {
-            View.setLayout(Rez.Layouts.MainLayout(dc));
+        	if (dc.getHeight() > 200) {
+            	View.setLayout(Rez.Layouts.MainLayout(dc));
+            } else {
+            	View.setLayout(Rez.Layouts.SmallLayout(dc));
+            }
         }
 
         View.findDrawableById("label").setText(Rez.Strings.label);
+        
         var zoneBars = View.findDrawableById("ZoneBars");
         zoneBars.setIsVerticalLayout(isVerticalLayout);
         zoneBars.initSizes(dc);
@@ -66,6 +80,11 @@ class ZonesView extends Ui.DataField {
 		}
 		
 		hr = info.currentHeartRate;
+		duration = info.elapsedTime;
+		distance = info.elapsedDistance;
+		
+		//calculate current pace
+		pace = 1 / (info.currentSpeed * 1000); // sec per km
 		
 		if(hr > zones[0] && hr <= zones[1]) {
        		timeInZone[0] += 1;
@@ -112,6 +131,28 @@ class ZonesView extends Ui.DataField {
 			valueField.setText("-");
 		} else {
 			valueField.setText((hr).toString());
+		}
+		
+		if (showDuration) {
+			var durationField = View.findDrawableById("duration");
+			if (durationField != null) {
+				if (duration >= 3600000) {
+					durationField.setText(
+						Lang.format("$1$:$2$:$3$", [
+							(duration / 3600000).format("%02d"), 
+							((duration / 60000) % 60).format("%02d"),
+							((duration / 1000) % 60).format("%02d")]
+						)
+					);
+				} else {
+					durationField.setText(
+						Lang.format("$1$:$2$", [
+							((duration / 60000) % 60).format("%02d"),
+							((duration / 1000) % 60).format("%02d")]
+						)
+					);
+				}
+			}
 		}
 
         // Call parent's onUpdate(dc) to redraw the layout

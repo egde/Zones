@@ -1,10 +1,25 @@
 <resources>
 	<properties>
 		<property id="isVerticalLayout" type="boolean">true</property>
+		<property id="showDuration" type="boolean">false</property>
+		<property id="showDistance" type="boolean">false</property>
+		<property id="showPace" type="boolean">false</property>
 	</properties>
 
 	<settings>
 		<setting propertyKey="@Properties.isVerticalLayout" title="@Strings.settings_isVerticalLayout">
+			<settingConfig type="boolean" />
+		</setting>
+		
+		<setting propertyKey="@Properties.showDuration" title="@Strings.settings_showTime">
+			<settingConfig type="boolean" />
+		</setting>
+		
+		<setting propertyKey="@Properties.showDistance" title="@Strings.settings_showDistance">
+			<settingConfig type="boolean" />
+		</setting>
+		
+		<setting propertyKey="@Properties.showPace" title="@Strings.settings_showPace">
 			<settingConfig type="boolean" />
 		</setting>
 	</settings>
